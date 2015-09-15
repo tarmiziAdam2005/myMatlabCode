@@ -41,10 +41,11 @@ y = y(:);
 
 n = length(y);
 
-[D DT DDT ] = DiffOper(sqrt(n)); %pre-compute some matrices, including 
+[D, DT, DDT ] = DiffOper(sqrt(n)); %pre-compute some matrices, including 
                                  % our differential operator D (hor and
                                  % ver)
-h = ones(1,K);
+h = ones(K,K);
+%h= h(:);
 x = y;
 Dx = D*x;
 Dy = D*y;
@@ -56,12 +57,21 @@ for k = 1:Nit
     
     xu = x;
     
-    r = sqrt(conv(abs(Dx).^2, h));
-    v = conv(1./r, h, 'valid');  
+    r = sqrt(conv2(abs(Dx).^2, h,'same'));
+    v = conv2(1./r, h, 'same');  
     
     F = 1/lam * spdiags(1./v,0,dim,dim) + DDT;  %1/lam*diag(Dx) + DDT
-    z = cgs(F,Dy,[],40); %solve linear system for z, F*z = Dy
-    x = y - DT*z; %update x
+    
+    %******Can use backlash*****************
+    z = F\Dy;                             %*  
+    x = y - DT*z; %update x               %*
+    %***************************************
+    
+    %*******Can use also congugate gradinet to solve the linear system****
+    %z = cgs(F,Dy,[],100); %solve linear system for z, F*z = Dy         %*
+    %x = y - DT*z; %update x                                            %*
+    %*********************************************************************
+    
     e = norm(xu-x)/norm(x); %convergence error
     err(k) = e;
     Dx = D*x; 
@@ -71,11 +81,16 @@ end
 x = reshape(x,256,256);
 end
 
-function [D DT DDT] = DiffOper(N)
-B = spdiags([-ones(N,1) ones(N,1)], [0 1], N,N+1);
-B(:,1) = [];
-B(1,1) = 0;
-D = [ kron(speye(N),B) ; kron(B,speye(N)) ];
+function [D,DT,DDT] = DiffOper(N)
+e = ones(N,1);
+B = spdiags([e -e], [1 0], N, N);
+B(N,1) =  1;
+
+Dv = kron(speye(N),B); 
+Dh = kron(B,speye(N));
+
+D = [ Dv ; Dh ]; %combine vertical and horizontal
+                 % difference matrix in one big matrix D. refer 2)
 DT = D';
 DDT = D*D';
 end
