@@ -1,4 +1,4 @@
-function out = ADMM(y,Img,mu,rho,Nit,tol)
+function out = ADMM(y,Img,lam,rho,Nit,tol)
 % created by Tarmizi Adam 16/5/2016
 % ADMM image denoising. This script solve the optimization problem
 %
@@ -43,15 +43,15 @@ for k=1:Nit
     u1          = Dx1 + y1/rho;
     u2          = Dx2 + y2/rho;
     
-    v1          = shrink(u1, mu/rho); 
-    v2          = shrink(u2, mu/rho);
+    v1          = shrink(u1, lam/rho); %mu/rho
+    v2          = shrink(u2, lam/rho);
     
     y1          =  y1 - rho*(v1 - Dx1);
     y2          =  y2 - rho*(v2 - Dx2);
     
     relError(k)    = norm(x - x_old,'fro')/norm(x, 'fro');
     r1          = x-y;
-    funcVal(k)  = 0.5*norm(r1,'fro')^2 + mu*sum(Dx1(:)+Dx2(:));
+    funcVal(k)  = 0.5*norm(r1,'fro')^2 + lam*sum(Dx1(:)+Dx2(:));
     
     if relError(k) < tol
           break

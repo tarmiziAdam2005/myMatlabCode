@@ -8,21 +8,21 @@ clc
 clear all;
 close all;
 
-Img = double(imread('peppers.bmp')); %Your Image goes here
+Img = double(imread('mosque256.bmp')); %Your Image goes here
 
-sigma = 15; % standard variation
+sigma = 30; % standard variation
 
 %g = imnoise(Img,'gaussian',0,sigma^2/255^2);
 
 g = Img +  sigma * randn(size(Img)); %Add a little noise
 
-lam    = 5.50;
+lam    = 25;
 
 
 res     = cell([1 size(lam,2)]);
 resSSIM = cell([1 size(lam,2)]); %Store SSIM result of each iteration
 resPSNR = cell([1 size(lam,2)]); %Store PSNR result of each iteration
-rho     = 1; %default 2
+rho     = 0.05; %default 2
 Nit     = 400;
 tol     = 1e-5;
 
