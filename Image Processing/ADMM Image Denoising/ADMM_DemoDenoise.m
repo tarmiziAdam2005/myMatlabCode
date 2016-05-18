@@ -27,19 +27,10 @@ Nit     = 400;
 tol     = 1e-5;
 
 %=============Deblurr algorithm==========
-%for k=1:length(lam)
     tg = tic;
     out = ADMM(g,Img,lam,rho,Nit,tol);
     tg = toc(tg);
-    %res{1,k} = out;
-    %resSSIM{1,k} = res{1,k}.ssimf;
-    %resPSNR{1,k} = res{1,k}.psnrf;
-%end
-%========================================
-
-%resSSIM = resSSIM';
-%resPSNR = resPSNR';
-
+ %=================================
 
 figure;
 imshow(uint8(out.sol));
