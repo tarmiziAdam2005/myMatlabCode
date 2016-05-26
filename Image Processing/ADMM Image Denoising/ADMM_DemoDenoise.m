@@ -26,12 +26,20 @@ rho     = 0.02; %regularization param related to the lagrange constraints
 Nit     = 400;
 tol     = 1e-5;
 
+<<<<<<< HEAD
 %=============Denoising algorithm==========
  
     out = ADMM(g,Img,lam,rho,Nit,tol);
 
 %========================================
 
+=======
+%=============Deblurr algorithm==========
+    tg = tic;
+    out = ADMM(g,Img,lam,rho,Nit,tol);
+    tg = toc(tg);
+ %=================================
+>>>>>>> origin/master
 
 figure;
 imshow(uint8(out.sol));
