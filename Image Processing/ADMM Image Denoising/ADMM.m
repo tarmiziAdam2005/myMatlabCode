@@ -1,5 +1,6 @@
 function out = ADMM(y,Img,lam,rho,Nit,tol)
 % created by Tarmizi Adam 16/5/2016
+%Update: 26/5/2016
 % ADMM image denoising. This script solve the optimization problem
 %
 %    min_x  1/2*||y - x||^2_2 + lamda||Dx||_1
@@ -24,10 +25,11 @@ psnrGain     = relError;     % PSNR improvement every iteration
 funcVal      = relError;     %Function value at each iteration
 
 eigDtD  = abs(fft2([1 -1], row, col)).^2 + abs(fft2([1 -1]', row, col)).^2;
-eigD    = abs(fft2([1 -1], row, col)) + abs(fft2([1 -1]', row, col));
 
 [D,Dt]      = defDDt(); %Declare forward finite difference operators
 [Dx1, Dx2] = D(x);
+
+tg = tic;
 
 for k=1:Nit
     
@@ -43,7 +45,7 @@ for k=1:Nit
     u1          = Dx1 + y1/rho;
     u2          = Dx2 + y2/rho;
     
-    v1          = shrink(u1, lam/rho); %mu/rho
+    v1          = shrink(u1, lam/rho); %lam/rho
     v2          = shrink(u2, lam/rho);
     
     y1          =  y1 - rho*(v1 - Dx1);
@@ -51,7 +53,7 @@ for k=1:Nit
     
     relError(k)    = norm(x - x_old,'fro')/norm(x, 'fro');
     r1          = x-y;
-    funcVal(k)  = 0.5*norm(r1,'fro')^2 + lam*sum(Dx1(:)+Dx2(:));
+    funcVal(k)  = (1/2)*norm(r1,'fro').^2 + lam*sum(Dx1(:) + Dx2(:));
     
     if relError(k) < tol
           break
@@ -59,11 +61,14 @@ for k=1:Nit
        
 end
 
+tg = toc(tg);
+
 out.psnrf                = psnr_fun(x, Img);
 out.ssimf                = ssim_index(x,Img);
 out.sol                 = x;                %Deblurred image
 out.functionValue       = funcVal(1:k);
 out.relativeError       = relError(1:k);
+out.cpuTime             = tg;
 
 end
 

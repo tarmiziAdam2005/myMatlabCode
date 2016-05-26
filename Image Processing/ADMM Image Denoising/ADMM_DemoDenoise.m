@@ -8,43 +8,35 @@ clc
 clear all;
 close all;
 
-Img = double(imread('mosque256.bmp')); %Your Image goes here
+Img = double(imread('Lighthouse256.bmp')); %Your Image goes here
 
-sigma = 30; % standard variation
-
-%g = imnoise(Img,'gaussian',0,sigma^2/255^2);
+sigma = 25; % standard variation
 
 g = Img +  sigma * randn(size(Img)); %Add a little noise
 
-lam    = 25;
+lam    = 15;
 
 
 res     = cell([1 size(lam,2)]);
 resSSIM = cell([1 size(lam,2)]); %Store SSIM result of each iteration
 resPSNR = cell([1 size(lam,2)]); %Store PSNR result of each iteration
-rho     = 0.05; %default 2
+
+rho     = 0.02; %regularization param related to the lagrange constraints
+
 Nit     = 400;
 tol     = 1e-5;
 
-%=============Deblurr algorithm==========
-%for k=1:length(lam)
-    tg = tic;
+%=============Denoising algorithm==========
+ 
     out = ADMM(g,Img,lam,rho,Nit,tol);
-    tg = toc(tg);
-    %res{1,k} = out;
-    %resSSIM{1,k} = res{1,k}.ssimf;
-    %resPSNR{1,k} = res{1,k}.psnrf;
-%end
-%========================================
 
-%resSSIM = resSSIM';
-%resPSNR = resPSNR';
+%========================================
 
 
 figure;
 imshow(uint8(out.sol));
-title(sprintf('ALM Denoised (PSNR = %3.3f dB,SSIM = %3.3f, cputime %.3f s) ',...
-                       out.psnrf, out.ssimf, tg));
+title(sprintf('ADMM Denoised (PSNR = %3.3f dB,SSIM = %3.3f, cputime %.3f s) ',...
+                       out.psnrf, out.ssimf, out.cpuTime));
 
 figure;
 imshow(uint8(g));
