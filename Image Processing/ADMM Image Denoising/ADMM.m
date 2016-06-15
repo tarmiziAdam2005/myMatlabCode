@@ -1,6 +1,13 @@
 function out = ADMM(y,Img,lam,rho,Nit,tol)
 % created by Tarmizi Adam 16/5/2016
 %Update: 26/5/2016
+%Update: 15/6/2016 added rho updating for accelerating convergence.
+%        rho updating reference: 
+%         - Chan, Stanley H., Ramsin Khoshabeh, Kristofor B. Gibson, Philip E. Gill, and 
+%           Truong Q. Nguyen. "An augmented Lagrangian method for video restoration." In 
+%           Acoustics, Speech and Signal Processing (ICASSP), 2011 IEEE International 
+%           Conference on, pp. 941-944. IEEE, 2011.
+      
 % ADMM image denoising. This script solve the optimization problem
 %
 %    min_x  1/2*||y - x||^2_2 + lamda||Dx||_1
@@ -12,7 +19,7 @@ function out = ADMM(y,Img,lam,rho,Nit,tol)
 
 [row,col] = size(y);
 x         = y;
-
+alpha     = 0.7;
 v1        = zeros(row,col); %Initialize intermediate variables for v subproblem
 v2        = zeros(row,col); %     "       "           "       for v subproblem
 
@@ -28,6 +35,8 @@ eigDtD  = abs(fft2([1 -1], row, col)).^2 + abs(fft2([1 -1]', row, col)).^2;
 
 [D,Dt]      = defDDt(); %Declare forward finite difference operators
 [Dx1, Dx2] = D(x);
+
+curNorm = sqrt(norm(Dx1(:) - v1(:),'fro'))^2 + sqrt(norm(Dx2(:) - v2(:),'fro'))^2;
 
 tg = tic;
 
@@ -55,6 +64,16 @@ for k=1:Nit
     r1          = x-y;
     funcVal(k)  = (1/2)*norm(r1,'fro').^2 + lam*sum(Dx1(:) + Dx2(:));
     
+    % ****Update the rho at each iteration to accelerate the convergence***
+    % Compare the acceleration with and without the rho updating.
+    normOld = curNorm;
+    curNorm = sqrt(norm(Dx1(:) - v1(:),'fro'))^2 + sqrt(norm(Dx2(:) - v2(:),'fro'))^2;
+    % **********Update rho condition starts here *****************
+    if curNorm > alpha*normOld
+        rho = 0.5*rho;
+    end
+    %*************************************************************
+    
     if relError(k) < tol
           break
     end
@@ -69,6 +88,7 @@ out.sol                 = x;                %Deblurred image
 out.functionValue       = funcVal(1:k);
 out.relativeError       = relError(1:k);
 out.cpuTime             = tg;
+out.finalRho            = rho;
 
 end
 
@@ -92,5 +112,4 @@ end
 function z = shrink(x,r)
 z = sign(x).*max(abs(x)- r,0);
 end
-
 
