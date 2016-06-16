@@ -21,7 +21,7 @@ res     = cell([1 size(lam,2)]);
 resSSIM = cell([1 size(lam,2)]); %Store SSIM result of each iteration
 resPSNR = cell([1 size(lam,2)]); %Store PSNR result of each iteration
 
-rho     = 0.02; %regularization param related to the lagrange constraints
+rho     = 2; %regularization param related to the lagrange constraints
 
 Nit     = 400;
 tol     = 1e-5;
