@@ -31,6 +31,7 @@ p       = 0.3;
 %=============Deblurr algorithm==========
 %for k=1:length(lam)
     tg = tic;
+    % out = lpALM_rhoUpdate(g,Img,H,mu,rho,Nit,p,tol); %with rho  										 %update
     out = lpALM(g,Img,H,mu,rho,Nit,p,tol); % lp-Norm TV function
     tg = toc(tg);
     %res{1,k} = out;
