@@ -1,3 +1,6 @@
+% This is a demo for color image denoising using ADMM. ADMM algorithm is applied to the color channels separately.
+% Created on 17/6/2016. Tarmizi adam (tarmizi_adam2005@yahoo.com)
+
 clc;
 clear all;
 close all;
