@@ -14,7 +14,7 @@ sigma = 25; % standard variation
 
 g = Img +  sigma * randn(size(Img)); %Add a little noise
 
-lam    = 15;
+lam    = 29.7;
 
 
 res     = cell([1 size(lam,2)]);
@@ -26,20 +26,15 @@ rho     = 2; %regularization param related to the lagrange constraints
 Nit     = 400;
 tol     = 1e-5;
 
-<<<<<<< HEAD
+%Regularization function. Isotropic TV ('iso') or Anisotropic TV ('ani')
+regType = 'iso';
+
 %=============Denoising algorithm==========
  
-    out = ADMM(g,Img,lam,rho,Nit,tol);
+    out = ADMM(g,Img,lam,rho,Nit,tol,regType);
 
 %========================================
 
-=======
-%=============Deblurr algorithm==========
-    tg = tic;
-    out = ADMM(g,Img,lam,rho,Nit,tol);
-    tg = toc(tg);
- %=================================
->>>>>>> origin/master
 
 figure;
 imshow(uint8(out.sol));
