@@ -1,11 +1,8 @@
-% This is a demo for color image denoising using ADMM. ADMM algorithm is applied to the color channels separately.
-% Created on 17/6/2016. Tarmizi adam (tarmizi_adam2005@yahoo.com)
-
 clc;
 clear all;
 close all;
 
-Img = double(imread('mizi.jpg')); %Your Image goes here
+Img = double(imread('butterfly.png')); %Your Image goes here
 
 [M,N,O] = size(Img);
 
@@ -23,7 +20,7 @@ imgNoise = cat(3,g1,g2,g3); %The noisy image
 
 cleanImg = zeros(M,N,O); % pre-allocate space for our denoised image
 
-lam    = 100; % Regularization parameter. Play around with this !
+lam    = 25; % Regularization parameter. Play around with this !
              % Larger values smoothens the image from noise.
              
 rho     = 2; %initial regularization param related to the lagrange constraints
@@ -34,6 +31,8 @@ rho     = 2; %initial regularization param related to the lagrange constraints
 Nit     = 400;  % Total iteration of the algorithm
 tol     = 1e-5; % Error tolerance before the algorithms stops. (Stopping criteria)
 
+%Regularization function. Isotropic TV ('iso') or Anisotropic TV ('ani')
+regType = 'ani';
 %%
 
 %=============Denoising algorithm==========
@@ -41,7 +40,7 @@ overallTime = tic;
 for i = 1:3
     
     % Here, we denoise each rgb chanel separately.
-    out = ADMM(imgNoise(:,:,i),Img,lam,rho,Nit,tol);
+    out = ADMM(imgNoise(:,:,i),Img,lam,rho,Nit,tol,regType);
     cleanImg(:,:,i) = out.sol;
     
 end
