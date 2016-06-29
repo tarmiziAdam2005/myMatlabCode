@@ -1,4 +1,4 @@
-function out = ADMM(y,Img,lam,rho,Nit,tol)
+function out = ADMM(y,Img,lam,rho,Nit,tol,regType)
 % created by Tarmizi Adam 16/5/2016
 %Update: 26/5/2016
 %Update: 15/6/2016 added rho updating for accelerating convergence.
@@ -7,6 +7,9 @@ function out = ADMM(y,Img,lam,rho,Nit,tol)
 %           Truong Q. Nguyen. "An augmented Lagrangian method for video restoration." In 
 %           Acoustics, Speech and Signal Processing (ICASSP), 2011 IEEE International 
 %           Conference on, pp. 941-944. IEEE, 2011.
+
+%Update: 29/6/2016, added Isotropic TV regularization (function
+%                   isoShrink())
       
 % ADMM image denoising. This script solve the optimization problem
 %
@@ -54,9 +57,19 @@ for k=1:Nit
     u1          = Dx1 + y1/rho;
     u2          = Dx2 + y2/rho;
     
-    v1          = shrink(u1, lam/rho); %lam/rho
-    v2          = shrink(u2, lam/rho);
-    
+    switch regType
+        case 'ani'
+            %If using anisotropic TV
+            v1          = shrink(u1, lam/rho); %lam/rho
+            v2          = shrink(u2, lam/rho);
+        case 'iso'
+            %If using isotropic TV
+            [v1,v2]     = isoShrink(u1,u2,lam/rho); 
+            
+        otherwise
+            warning('No such regularization !, Denoising failed !')
+            break;
+    end
     y1          =  y1 - rho*(v1 - Dx1);
     y2          =  y2 - rho*(v2 - Dx2);
     
@@ -109,5 +122,14 @@ end
 
 function z = shrink(x,r)
 z = sign(x).*max(abs(x)- r,0);
+end
+
+function [v1, v2] = isoShrink(u1,u2,r)
+    u = sqrt(u1.^2 + u2.^2);
+    u(u==0) = 1;
+    u = max(u - r,0)./u;
+    
+    v1 = u1.*u;
+    v2 = u2.*u;
 end
 
