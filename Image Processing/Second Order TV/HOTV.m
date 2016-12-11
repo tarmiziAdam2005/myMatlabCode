@@ -5,7 +5,15 @@ function out = HOTV(f, Img ,K ,opts)
 %     min_u lam/2*||Ku - f||_2^2 + omega*TV(DDu)_iso,
 %
 %using ADMM where, DDu is the 2nd order difference operator and TV(.)_iso is the 
-%isotropic total variation functional. Run this code through the demo .m 
+%isotropic total variation functional. This model is reffered as the Lysaker–Lundervold–Tai (LLT) model for image
+%restoration. Please refer to the paper:
+
+%    M. Lysaker, A. Lundervold, and X.-C. Tai, Noise removal using fourth-order partial differential
+%    equations with applications to medical magnetic resonance images in space and time, IEEE Trans.
+%    Image Process., 12 (2003), pp. 1579–1590.
+
+% To follow exactly the LLT model, set 'omega = 1' and play around with 'lam'.
+%Run this code through the demo .m 
 %code HOTV_demo.m
 
 % Any suggestions, errors or bugs feel free to contact me at:
