@@ -31,7 +31,7 @@ opts.omega     = 50;  % reg param for 2nd order TV
 
 opts.Nit       = 400;
 opts.tol       = 1.0e-5;
-opts.beta      = 1;
+opts.beta      = 0.1;
 
 % ****** The main solver ******
 out = HOTV(f,Img,K, opts);
