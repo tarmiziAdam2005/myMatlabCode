@@ -96,7 +96,7 @@ tg = tic;
         curNorm = sqrt(norm(Duxx(:) - v1(:),'fro'))^2 + sqrt(norm(Duxy(:) - v2(:),'fro'))^2 + sqrt(norm(Duyx(:) - v3(:),'fro'))^2 + sqrt(norm(Duyy(:) - v4(:),'fro'))^2;
         
         if curNorm > alpha*normOld
-            beta = 2*beta;
+            beta = 0.95*beta;
         end  
     end
     
