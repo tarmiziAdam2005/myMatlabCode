@@ -12,7 +12,7 @@ function out = HOTV(f, Img ,K ,opts)
 %    equations with applications to medical magnetic resonance images in space and time, IEEE Trans.
 %    Image Process., 12 (2003), pp. 1579–1590.
 
-% To follow exactly the LLT model, set 'omega = 1' and play around with 'lam'.
+% To follow exactly the LLT model, set 'lam = 1' and play around with 'omega'.
 %Run this code through the demo .m 
 %code HOTV_demo.m
 
@@ -39,6 +39,7 @@ mu4        = zeros(row,col);
 
 relError   = zeros(Nit,1); % Compute error relative to the previous iteration.
 funcVal    = relError;
+psnrGain   = relError; 
 v1         = zeros(row, col);
 v2         = v1;
 v3         = v1;
@@ -85,6 +86,7 @@ tg = tic;
         mu4     = mu4 - beta*(v4 - Duyy);
          
         relError(k)    = norm(u - u_old,'fro')/norm(u, 'fro');
+        psnrGain(k)    = psnr_fun(u,Img);
         r1          = imfilter(u, K, 'circular')-f;
         funcVal(k)  = (lam/2)*norm(r1,'fro')^2 + omega*sqrt(sum(Duxx(:).^2 + Duxy(:).^2 + Duyx(:).^2 + Duyy(:).^2));
         
@@ -106,6 +108,10 @@ tg = toc(tg);
     out.relativeError       = relError(1:k);
     out.functionValue       = funcVal(1:k);
     out.cpuTime             = tg;
+    out.psnrGain            = psnrGain(1:k);
+    out.psnrRes             = psnr_fun(u, Img);
+    out.ssimRes             = ssim_index(u, Img);
+    out.OverallItration     = size(out.functionValue,1); %No of itr to converge
 
 end
 
