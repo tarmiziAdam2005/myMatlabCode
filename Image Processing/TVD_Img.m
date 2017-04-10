@@ -50,7 +50,7 @@ for k = 1:Nit
     
     xu = x;
     F = 1/lam * spdiags(abs(Dx),0,dim,dim) + DDT;  %1/lambda*Dx + DDT
-    z = cgs(F,Dy,[],40); %solve linear system for z, F*z = Dy
+    z = cgs(F,Dy,[],10); %solve linear system for z, F*z = Dy
     x = y - DT*z; %update x, see reference 1)
     e = norm(xu-x)/norm(x); %convergence error
     err(k) = e;
