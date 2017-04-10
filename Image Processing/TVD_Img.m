@@ -14,18 +14,19 @@ function [x, err] = TVD_Img(y, lam, Nit)
 % references:
 
 %   1) M. Figueiredo, J. B. Dias, J. P. Oliveira, R. D. Nowak et al., 
-%      ìOn total variation denoising: A new majorization-minimization 
-%      algorithm and an experimental comparisonwith wavalet denoising,î 
+%      ‚ÄúOn total variation denoising: A new majorization-minimization 
+%      algorithm and an experimental comparisonwith wavalet denoising,‚Äù 
 %      in IEEE International Conference on Image Processing. 
-%      IEEE, 2006, pp. 2633ñ2636.
+%      IEEE, 2006, pp. 2633‚Äì2636.
 
 %   2) Micchelli, C. A., Shen, L., and Xu, Yuesheng. 
 %      "Proximity algorithms for image models: Denoising"               
 %      Inverse Problems (27).1-29 (2011)
 
 %   3) Tutorial and codes from: I. Selesnick, 
-%      ìTotal variation denoising (an mm algorithm)
+%      ‚ÄúTotal variation denoising (an mm algorithm)
 
+[row,col] = size(y);
 y = double(y);
 y = y(:); 
 
@@ -57,7 +58,7 @@ for k = 1:Nit
     
 end
 
-x = reshape(x,256,256);
+x = reshape(x,row,col);
 
 end
 
