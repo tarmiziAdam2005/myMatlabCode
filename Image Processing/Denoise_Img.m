@@ -17,7 +17,7 @@ s = double(imread('lenaN','bmp'));
 
 Nit = 20; %Number of iterations to run the algorithm
 sigma = 30; %Noise level added to the image
-lam = 10 %sqrt(3*sigma); %Regularization parameter lambda
+lam = 20 %sqrt(3*sigma); %Regularization parameter lambda
 K = 6;
 
 %% Add noise to image
@@ -25,7 +25,7 @@ noise = sigma * randn(size(s));
 y = s + noise;  
 
 [x1,err1] = TVD_Img(y,lam,Nit);
-%[x1,err1] = GSTVD_Img(y,K,lam,Nit);
+%[x1,err1] = GSTVD_Img(y,K,lam,Nit);  % Uncomment for Group Sparse TV
 
 score = psnr(s,x1); %PSNR score of the denoised Image
 rmse = sqrt(sum((s(:)-x1(:)).^2)/numel(s)); %RMSE score of the denoise image
